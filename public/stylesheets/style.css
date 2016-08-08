@@ -1,0 +1,58 @@
+
+
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+.main-button-indicator {
+}
+
+.main-button-indicator span {
+  text-align: center;
+  margin-top: 5px;
+
+}
+
+.main-button {
+  margin: 5px;
+  margin-top: 10px;
+}
+
+.contact p {
+  font-size: 10px;
+
+}
+
+.footer {
+  background: #2c3e50;
+}
+
+.toolbar-back {
+  background: #2980b9;
+}
+
+.next-fab {
+  position: fixed;
+  right: 15px;
+  bottom: 15px;
+  z-index: 100;
+}
+
+
+.validation-messages {
+    font-size: 12px;
+    color: #dd2c00;
+}
+
+.hidden {
+  visibility: hidden;
+}
+
+.expired {
+  color: #dd2c00;
+}

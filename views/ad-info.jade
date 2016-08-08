@@ -1,0 +1,51 @@
+md-dialog(aria-label='Donors', ng-cloak='')
+  form
+    md-toolbar
+      .md-toolbar-tools
+        h2 Donors
+        span(flex='')
+        md-button.md-icon-button(ng-click='cancel()')
+          md-icon(md-svg-src='/images/cross.svg', aria-label='Close dialog')
+    md-dialog-content
+      .md-dialog-content
+
+        md-list(flex)
+          md-subheader(ng-show='!isEmpty()') Replies
+          md-subheader(ng-show='isEmpty()') No replies yet
+          md-list-item.md-2-line.md-padding(ng-repeat='user in response.ad.users', layout='column')
+            md-divider
+            div.md-list-item-text
+              br
+              &nbsp;
+              br
+              span {{user.user.fname}}  {{user.user.mname}} {{user.user.lname}}
+              br
+              span {{user.user.gender}} {{formatDate(user.user.dob)}}
+              br
+              &nbsp;
+              br
+              span {{user.user.login.mobile}}
+              br
+              span {{user.user.login.email}}
+              br
+              &nbsp;
+              br
+              span {{user.user.login.address.businessBlockName}},
+              br
+              span {{user.user.login.address.streetAddress}},
+              br
+              span {{user.user.login.address.city.name}} {{user.user.login.address.pinCode}}
+              br
+              span {{user.user.login.address.state.name}}
+              br
+              &nbsp;
+              br
+            md-content(layout='row', layout-align='end end', style='width:100%;')
+              md-button.md-primary(ng-click='acceptDonor(user)', ng-show='!user.accepted&&!user.done') Accept
+              md-button.md-primary(ng-click='releaseDonor(user)', ng-show='user.accepted&&!user.done') Complete
+              md-button.md-primary(ng-click='cancelDonor(user)', ng-show='user.accepted&&!user.done') Cancel
+              md-button.md-primary(ng-show='user.done', ng-disabled="'true'") Donation was complete!
+
+    md-dialog-actions(layout='row')
+      span(flex='')
+      md-button(ng-click="answer('ok')") Okay

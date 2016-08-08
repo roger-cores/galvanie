@@ -1,0 +1,45 @@
+md-content.md-padding(layout-xs='column', layout-gt-xs='row')
+  div.md-inline-form(flex-gt-xs='40')
+    md-card#card(layout-padding)
+      md-subheader.md-no-sticky create or edit Ad
+      div(layout='column')
+        form(name='adDataForm')
+          input(ng-show='false', disabled, style='opacity: 0; height:0px', ng-model='adData.masterData.requestedBloodGroup', name='selectedBloodgroup', required)
+
+          md-input-container(flex, style='width:100%;')
+            label Blood Group
+            md-select(ng-model='adData.masterData.requestedBloodGroup', name='bloodgroup')
+              md-option(ng-repeat='bloodgroup in bloodgroups', value='{{bloodgroup._id}}') {{bloodgroup.name}}
+            div.errors(ng-messages='adDataForm.selectedBloodgroup.$error', md-auto-hide="false")
+              div(ng-message='required') Please chose a valid bloodgroup
+
+          md-datepicker(name='expiry', ng-model='adData.masterData.expiry', md-placeholder='Enter expiry date', required='', md-min-date='today', md-max-date='nextMonth')
+
+          .validation-messages(ng-messages='adDataForm.expiry.$error')
+            div(ng-message='required') This date is required!
+            div(ng-message='mindate') select a date between {{getExpiryInvalidMsg()}}!
+            div(ng-message='maxdate') select a date between {{getExpiryInvalidMsg()}}!
+
+
+        div(layout='row', layout-align='center center')
+          md-input-container
+            md-button.md-raised.md-primary(ng-click='adData.update()', ng-disabled='!adData.edittingMode || adDataForm.$invalid') Update
+          md-input-container
+            md-button.md-raised.md-primary(ng-click='adData.add()', ng-disabled='adData.edittingMode || adDataForm.$invalid') Add
+          md-input-container
+            md-button.md-raised(ng-click='adData.clear()') Clear
+
+  md-card(layout-padding, flex-gt-xs='60')
+    md-list(flex)
+      md-subheader Ads
+      md-list-item.md-2-line(ng-repeat='masterData in adData.masterDataList')
+        md-divider
+        div.md-list-item-text(flex = '3')
+          md-button.md-primary(style='text-align: left;', ng-click='openAd($event, masterData)') Blood Group: {{masterData.requestedBloodGroup.name}}
+            br
+            span Expires: {{formatDate(masterData.expiry)}}
+        div.md-secondary(layout='row', flex = '1')
+          md-button.md-icon-button(ng-click='adData.edit(masterData)')
+            md-icon(md-svg-icon='../images/pencil.svg', aria-label='Edit')
+          md-button.md-icon-button(ng-click='adData.remove(masterData)')
+            md-icon(md-svg-icon='../images/bin.svg', aria-label='Edit')

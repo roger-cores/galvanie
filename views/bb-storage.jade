@@ -1,0 +1,49 @@
+md-content.md-padding(layout-xs='column', layout-gt-xs='row')
+  div.md-inline-form(flex-gt-xs='40')
+    md-card#card(layout-padding)
+      md-sub-header.md-no-sticky create or edit {{selectedbloodStorageData.masterData}}
+      div(layout='column')
+        form(name='bloodStorage')
+          input(ng-show='false', disabled, style='opacity: 0; height:0px', ng-model='bloodStorageData.masterData.bloodGroup', ng-pattern='bloodGroupPattern', name='selectedBloodgroup', required)
+
+          md-input-container(flex, style='width:100%;')
+            label Blood Group
+            md-select(ng-model='bloodStorageData.masterData.bloodGroup', name='bloodgroup', ng-change='bloodGroupChanged(bloodStorageData.masterData.bloodGroup)')
+              md-option(ng-repeat='bloodgroup in bloodgroups', value='{{bloodgroup._id}}') {{bloodgroup.name}}
+            div.errors(ng-messages='bloodStorage.selectedBloodgroup.$error', md-auto-hide="false", multiple)
+              div(ng-message='required') Please chose a valid bloodgroup
+              div(ng-message='pattern') This blood group is already added
+          md-input-container(flex, style='width:100%;')
+            label Available
+            input(name='available', required, type='number', ng-model='bloodStorageData.masterData.units')
+            div(ng-messages='bloodStorage.available.$error', md-auto-hide="false")
+              div(ng-message = 'required') Please input a valid available quantity
+          md-input-container(flex, style='width:100%;')
+            label Minimum threshold
+            input(name='threshold', type='number', required, ng-model='bloodStorageData.masterData.threshold')
+            div(ng-messages='bloodStorage.threshold.$error', md-auto-hide='false')
+              div(ng-message = 'required') Please input threshold number
+
+        div(layout='row', layout-align='center center')
+          md-input-container
+            md-button.md-raised.md-primary(ng-click='bloodStorageData.update()', ng-disabled='!bloodStorageData.edittingMode || bloodBank.$invalid') Update
+          md-input-container
+            md-button.md-raised.md-primary(ng-click='bloodStorageData.add()', ng-disabled='bloodStorageData.edittingMode || bloodStorage.$invalid') Add
+          md-input-container
+            md-button.md-raised(ng-click='bloodStorageData.clear()') Clear
+
+  md-card(layout-padding, flex-gt-xs='60')
+    md-list(flex)
+      md-list-item.md-3-line(ng-repeat='masterData in bloodStorageData.masterDataList')
+        md-divider
+        div.md-list-item-text(flex = '3')
+          h3 Blood Group: {{masterData.bloodGroup.name}}
+          br
+          span Available: {{masterData.units}}
+          br
+          span Minimum threshold: {{masterData.threshold}}
+        div.md-secondary(layout='row', flex = '1')
+          md-button.md-icon-button(ng-click='bloodStorageData.edit(masterData)')
+            md-icon(md-svg-icon='../images/pencil.svg', aria-label='Edit')
+          md-button.md-icon-button(ng-click='bloodStorageData.remove(masterData)')
+            md-icon(md-svg-icon='../images/bin.svg', aria-label='Edit')

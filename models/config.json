@@ -1,0 +1,24 @@
+{
+
+  "qa": {
+    "username": "myUserAdmin",
+    "password": "abc123",
+    "database": "galvanie_qa",
+    "host": "127.0.0.1",
+    "port": 27017
+  },
+  "sandbox": {
+    "username": "admin",
+    "password": "admin",
+    "database": "doughnuts_prod",
+    "host": "ds023088.mlab.com",
+    "port": 23088
+  },
+  "production": {
+    "username": "myUserAdmin",
+    "password": "GhanshyaM@Cisc0:)",
+    "database": "galvanie",
+    "host": "127.0.0.1",
+    "port": 27017
+  }
+}

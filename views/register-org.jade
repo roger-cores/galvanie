@@ -1,0 +1,106 @@
+extends layout
+//name, description, license_no, email, phone, password, address
+block content
+  div(ng-controller = 'OrgRegisterCtrl')
+    md-content.first(layout='column')
+      div(layout-xs = 'column', layout-gt-xs = 'row')
+        div(layout='column', flex-gt-xs='35')
+          md-card(layout='column')
+            md-toolbar
+              md-card-title.toolbar-back
+                md-card-title-text
+                  span Organization info
+            form.md-padding(layout='column', name = 'orgInfo')
+              md-input-container
+                label Name
+                input(name='name', required, minLength='5', maxLength='30', ng-model='org.name')
+                div(ng-messages='orgInfo.name.$error', md-auto-hide="false")
+                  div(ng-message-exp="['required', 'minlength', 'maxlength']") Please enter a name between 5 to 30 characters
+
+              md-input-container
+                label Description
+                textarea(name='description', required, ng-maxlength='100', ng-model='org.desc')
+                div(ng-messages='orgInfo.description.$error', md-auto-hide="false")
+                  div(ng-message='required') Describe your organization
+
+              md-input-container
+                label License number
+                input(name='license', type='number', required, ng-maxlength='20', ng-pattern='licensePattern', ng-change='validateLicense(org.license)', ng-model='org.license', ng-model-options="{allowInvalid: true}")
+                div(ng-messages='orgInfo.license.$error', md-auto-hide="false")
+                  div(ng-message-exp="['required', 'pattern']") {{licensemsg}}
+
+
+          md-card(layout='column')
+            md-toolbar
+              md-card-title.toolbar-back
+                md-card-title-text
+                  span Account Info
+            form.md-padding(layout='column', name='account')
+              md-input-container
+                label email
+                input(name='email', required, minLength='5', maxLength='100', ng-pattern="emailPattern", ng-model='org.email', ng-change='validateEmail(org.email)',  ng-model-options="{allowInvalid: true}")
+                div(ng-messages='account.email.$error', md-auto-hide="false")
+                  div(ng-message-exp="['required', 'pattern', 'minLength', 'maxLength']") {{emailmsg}}
+
+              md-input-container
+                label phone
+                input(name='phone', required, type='number', ng-pattern="mobilePattern", ng-model='org.mobile', ng-change='validateMobile(org.mobile)', ng-model-options="{allowInvalid: true}")
+                div(ng-messages='account.phone.$error', md-auto-hide="false")
+                  div(ng-message-exp="['required', 'pattern']") {{mobilemsg}}
+              md-input-container
+                label password
+                input(name='password', type='password', required, minLength='8', maxLength='50', ng-pattern = "/(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?=.*[0-9])/", ng-model="org.password", ng-change='account.repassword.$validate()')
+                div(ng-messages='account.password.$error', md-auto-hide="false")
+                  div(ng-message-exp="['required', 'minlength', 'maxlength', 'pattern']") Password should be at least 8 characters long with atleast one number, one special character, one lowercase and one uppercase letter
+              md-input-container
+                label repeat password
+                input(name='repassword', type='password', required, ng-pattern="repPasswordPattern", ng-model='org.repassword')
+                div(ng-messages='account.repassword.$error', md-auto-hide="false")
+                  div(ng-message-exp="['required', 'pattern']") Passwords donot match
+        md-card(layout='column', flex-gt-xs='65')
+          md-toolbar
+            md-card-title.toolbar-back
+              md-card-title-text
+                span Where are you?
+          form.md-padding(layout='column', name='address', id='address')
+            input(ng-show='false', disabled, style='opacity: 0; height:0px', ng-model='org.address.state', name='state', required)
+            input(ng-show='false', disabled, style='opacity: 0; height:0px', ng-model='org.address.city', name='city', required)
+
+            md-input-container
+              label State
+              md-select(ng-model='org.address.state')
+                md-option(ng-repeat='state in states', value='{{state._id}}', ng-click='refreshCities(state._id)') {{state.name}}
+              div.errors(ng-messages='address.state.$error', md-auto-hide="false")
+                div(ng-message='required') Please chose a valid state
+
+            md-input-container
+              label City
+              md-select(ng-model='org.address.city')
+                md-option(ng-repeat='city in cities', value='{{city._id}}') {{city.name}}
+              div.errors(ng-messages='address.city.$error', md-auto-hide="false")
+                div(ng-message='required') Please chose a valid city
+
+            md-input-container.md-block
+              label Street address
+              textarea(ng-model='org.address.streetAddress', name='streetAddress', rows='5', ng-maxlength='150', ng-minlength='25' required)
+              div(ng-messages='address.streetAddress.$error', md-auto-hide='false')
+                div(ng-message-exp="['required', 'minlength', 'maxlength']") Street address should be between 25 to 150 characters
+            md-input-container
+              label Pin code
+              input(type='number', name='pin', ng-pattern='/[0-9]{6}/', ng-model='org.address.pinCode', required)
+              div(ng-messages = 'address.pin.$error', md-auto-hide='false')
+                div(ng-message-exp="['required', 'pattern']") Please input a valid pincode
+            md-input-container
+              label Flat No./ Building Name
+              input(ng-model='org.address.businessBlockName', name='blockName', required)
+              div(ng-messages='address.blockName.$error', md-auto-hide='false')
+                div(ng-message='required') Flat No./ Building Name is required
+            div(flex)
+            md-input-container(layout='row', layout-align='end end')
+              md-button.md-raised(ng-click='clear()') Clear
+              md-button.md-raised.md-primary(ng-disabled='address.$invalid || orgInfo.$invalid || account.$invalid', ng-click='register()') Submit
+
+
+
+
+  script(src='/javascripts/controllers/org-register.js')

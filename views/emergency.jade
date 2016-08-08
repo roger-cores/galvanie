@@ -1,0 +1,97 @@
+extends layout
+
+block content
+  div(ng-controller = 'EmergencyRegisterCtrl')
+    md-content.first(ng-show='firstVisible', layout='column')
+      div(layout-xs = 'column', layout-gt-xs = 'row')
+        div(layout='column', flex-gt-xs='35')
+          md-card(layout='column')
+            md-toolbar
+              md-card-title.toolbar-back
+                md-card-title-text
+                  span Select the group
+            form.md-padding(layout='column', name = 'bloodgroupForm')
+              input(ng-show='false', disabled, style='opacity: 0; height:0px', ng-model='user.bloodgroup', name='selectedBloodgroup', required)
+
+              md-input-container
+                label Blood Group
+                md-select(ng-model='user.bloodgroup', name='bloodgroup')
+                  md-option(ng-repeat='bloodgroup in bloodgroups', value='{{bloodgroup._id}}') {{bloodgroup.name}}
+                div.errors(ng-messages='bloodgroupForm.selectedBloodgroup.$error', md-auto-hide="false")
+                  div(ng-message='required') Please chose a valid bloodgroup
+
+
+          md-card(layout='column')
+            md-toolbar
+              md-card-title.toolbar-back
+                md-card-title-text
+                  span Account Info
+            form.md-padding(layout='column', name='account')
+              md-input-container
+                label email
+                input(name='email', required, minLength='5', maxLength='100', ng-pattern="emailPattern", ng-model='user.email', ng-change='validateEmail(user.email)',  ng-model-options="{allowInvalid: true}")
+                div(ng-messages='account.email.$error', md-auto-hide="false")
+                  div(ng-message-exp="['required', 'pattern', 'minLength', 'maxLength']") {{emailmsg}}
+
+              md-input-container
+                label phone
+                input(name='phone', required, type='number', ng-pattern="mobilePattern", ng-model='user.mobile', ng-change='validateMobile(user.mobile)', ng-model-options="{allowInvalid: true}")
+                div(ng-messages='account.phone.$error', md-auto-hide="false")
+                  div(ng-message-exp="['required', 'pattern']") {{mobilemsg}}
+              md-input-container
+                label password
+                input(name='password', type='password', required, minLength='8', maxLength='50', ng-pattern = "/(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?=.*[0-9])/", ng-model="user.password", ng-change='account.repassword.$validate()')
+                div(ng-messages='account.password.$error', md-auto-hide="false")
+                  div(ng-message-exp="['required', 'minlength', 'maxlength', 'pattern']") Password should be at least 8 characters long with atleast one number, one special character, one lowercase and one uppercase letter
+              md-input-container
+                label repeat password
+                input(name='repassword', type='password', required, ng-pattern="repPasswordPattern", ng-model='user.repassword')
+                div(ng-messages='account.repassword.$error', md-auto-hide="false")
+                  div(ng-message-exp="['required', 'pattern']") Passwords donot match
+        md-card(layout='column', flex-gt-xs='65')
+          md-toolbar
+            md-card-title.toolbar-back
+              md-card-title-text
+                span Where are you?
+          form.md-padding(layout='column', name='address', id='address')
+            input(ng-show='false', disabled, style='opacity: 0; height:0px', ng-model='user.address.state', name='state', required)
+            input(ng-show='false', disabled, style='opacity: 0; height:0px', ng-model='user.address.city', name='city', required)
+
+            md-input-container
+              label State
+              md-select(ng-model='user.address.state')
+                md-option(ng-repeat='state in states', value='{{state._id}}', ng-click='refreshCities(state._id)') {{state.name}}
+              div.errors(ng-messages='address.state.$error', md-auto-hide="false")
+                div(ng-message='required') Please chose a valid state
+
+            md-input-container
+              label City
+              md-select(ng-model='user.address.city')
+                md-option(ng-repeat='city in cities', value='{{city._id}}') {{city.name}}
+              div.errors(ng-messages='address.city.$error', md-auto-hide="false")
+                div(ng-message='required') Please chose a valid city
+
+            md-input-container.md-block
+              label Street address
+              textarea(ng-model='user.address.streetAddress', name='streetAddress', rows='5', ng-maxlength='150', ng-minlength='25' required)
+              div(ng-messages='address.streetAddress.$error', md-auto-hide='false')
+                div(ng-message-exp="['required', 'minlength', 'maxlength']") Street address should be between 25 to 150 characters
+            md-input-container
+              label Pin code
+              input(type='number', name='pin', ng-pattern='/[0-9]{6}/', ng-model='user.address.pinCode', required)
+              div(ng-messages = 'address.pin.$error', md-auto-hide='false')
+                div(ng-message-exp="['required', 'pattern']") Please input a valid pincode
+            md-input-container
+              label Flat No./ Building Name
+              input(ng-model='user.address.businessBlockName', name='blockName', required)
+              div(ng-messages='address.blockName.$error', md-auto-hide='false')
+                div(ng-message='required') Flat No./ Building Name is required
+
+            md-input-container(layout='row', layout-align='end end', flex)
+              md-button.md-raised(ng-click='clear()') Clear
+              md-button.md-raised.md-primary(ng-disabled='address.$invalid || bloodgroupForm.$invalid || account.$invalid', ng-click='register()') Submit
+
+
+
+
+  script(src='/javascripts/controllers/emergency-register.js')

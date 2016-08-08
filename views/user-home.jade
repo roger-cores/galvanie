@@ -1,0 +1,142 @@
+md-content(ng-controller='UserCtrl', layout='column')
+  md-content.md-padding(layout='row', layout-align='center center')
+      span.md-subheader Welcome {{storage.concreteUserInfo.fname}} ({{storage.concreteUserInfo.bloodGroup.name}})
+      span(flex)
+      md-button.md-warn(ng-class='newRequestClass', ng-click="newRequestAlter()") New Request
+  md-divider
+  md-card.md-padding(ng-show='requestEditMode && !currentRequestExists')
+    form(name='request')
+      input(ng-show='false', disabled, style='opacity: 0; height:0px', ng-model='request.requestedBloodGroup', name='selectedBloodgroup', required)
+
+      md-input-container(style='width:100%;')
+        label Blood Group
+        md-select(ng-model='request.requestedBloodGroup', name='bloodgroup')
+          md-option(ng-repeat='bloodgroup in bloodgroups', value='{{bloodgroup._id}}') {{bloodgroup.name}}
+        div.errors(ng-messages='request.selectedBloodgroup.$error', md-auto-hide="false")
+          div(ng-message='required') Please chose a valid bloodgroup
+      br
+      label Select deadline
+      br
+      md-datepicker(name='deadline', ng-model='deadline', required='', md-min-date='today', md-max-date='nextMonth',  style='height: 48px;')
+
+      md-input-container
+        md-select(ng-model='request.selectedTime', name='time', ng-model-options="{trackBy: $value.id}", flex-xs, placeholder = 'time', style='margin-left: 10px;', aria-label='Select time')
+          md-option(ng-repeat='time in times track by time.id', value='{{time.id}}') {{time.time}}
+      .validation-messages(ng-messages='request.deadline.$error')
+        div(ng-message='required') This date is required!
+        div(ng-message='mindate') select a date between {{getExpiryInvalidMsg()}}!
+        div(ng-message='maxdate') select a date between {{getExpiryInvalidMsg()}}!
+
+
+    md-checkbox(ng-model='request.copyAddress', aria-label='Copy your existing address?') Copy current address
+    form(name='address', layout='column', ng-show='!request.copyAddress', style='width: 100%;')
+      input(ng-show='false', disabled, style='opacity: 0; height:0px', ng-model='request.address.state', name='state', required)
+      input(ng-show='false', disabled, style='opacity: 0; height:0px', ng-model='request.address.city', name='city', required)
+      md-content(layout-gt-xs='row', layout-xs='column')
+        md-input-container(flex)
+          label State
+          md-select(ng-model='request.address.state', ng-change='request.address.city = null', multiple = false)
+            md-option(ng-repeat='state in states', value='{{state._id}}', ng-click='refreshCities(state._id)') {{state.name}}
+          div.errors(ng-messages='address.state.$error', md-auto-hide="false")
+            div(ng-message='required') Please chose a valid state
+
+        md-input-container(flex)
+          label City
+          md-select(ng-model='request.address.city')
+            md-option(ng-repeat='city in cities', value='{{city._id}}') {{city.name}}
+          div.errors(ng-messages='address.city.$error', md-auto-hide="false")
+            div(ng-message='required') Please chose a valid city
+      md-input-container.md-block
+        label Block name
+        input(ng-model='request.address.businessBlockName', name='blockName', required)
+        div(ng-messages='address.blockName.$error', md-auto-hide='false')
+          div(ng-message='required') Block name is required
+      md-input-container.md-block
+        label Street address
+        textarea(ng-model='request.address.streetAddress', name='streetAddress', rows='5', ng-maxlength='150', ng-minlength='25' required)
+        div(ng-messages='address.streetAddress.$error', md-auto-hide='false')
+          div(ng-message-exp="['required', 'minlength', 'maxlength']") Street address should be between 25 to 150 characters
+      md-input-container.md-block
+        label Pin code
+        input(type='number', name='pin', ng-pattern='/[0-9]{6}/', ng-model='request.address.pinCode', required)
+        div(ng-messages = 'address.pin.$error', md-auto-hide='false')
+          div(ng-message-exp="['required', 'pattern']") Please input a valid pincode
+
+    md-content(layout='row')
+      span(flex)
+      md-button.md-raised.md-primary(ng-disabled='request.$invalid || (address.$invalid && !request.copyAddress)', ng-click='createRequest()') Create
+      md-button.md-raised.md-warn(ng-click='requestEditMode = false; newRequestClass = null') Cancel
+  br
+  br
+  md-content(layout-xs='column', layout-gt-xs='row')
+    md-content(ng-show='currentRequestExists')
+      md-card
+        md-content(layout='row')
+          md-subheader(flex) Active request:  {{currentRequest.requestedBloodGroup.name}}
+          md-button.md-warn(ng-click='cancelRequest()') Cancel request
+        md-divider
+        md-content.md-padding
+          br
+          span Created: {{getFormattedRequestedDate()}}
+          br
+          span {{getFormattedDeadlineDate()}}
+    md-card(flex)
+      md-content(layout='column', ng-show='!isLastDonatedNull()')
+        md-subheader(flex) You can donate {{fromNow(lastDonated)}}
+      md-content(layout='column', ng-show='listVisibility() && isLastDonatedNull()')
+        md-subheader(flex) Save a life today! Chose a blood bank below to donate!
+        md-divider
+        md-list.md-padding
+          md-list-item.md-3-line(ng-repeat='ad in ads')
+            .md-list-item-text
+              br
+              h5 {{ad.requestorBloodBank.name}}
+              h4 Organization: {{ad.requestorBloodBank.organization.name}}
+              br
+              span {{ad.requestorBloodBank.address.businessBlockName}},
+              br
+              span {{ad.requestorBloodBank.address.streetAddress}},
+              br
+              span {{ad.requestorBloodBank.address.city.name}} {{ad.requestorBloodBank.address.pinCode}},
+              br
+              span {{ad.requestorBloodBank.address.state.name}}
+              br
+              md-content(layout='row')
+                span(flex)
+                md-button.md-primary(ng-click='donate(ad)') Donate here
+              br
+              &nbsp;
+            md-divider
+      md-content(layout='column', ng-show='!adsListStatus && isLastDonatedNull()')
+          md-content(layout='row', layout-align='center center')
+            .md-subheader.md-padding(flex) You chose to donate at
+            md-button.md-primary(ng-disabled='true', ng-show='status.accepted') Accepted
+          md-divider
+          md-content.md-padding
+            md-content(layout='row')
+              h4(flex) {{ad.requestorBloodBank.name}}
+              md-content(layout='column')
+                md-button.md-warn(ng-click='cancelDonation()') Cancel
+                span(style='text-align: center') expiring {{getFormattedExpiringDate()}}
+            br
+            &nbsp;
+            br
+            &nbsp;
+            br
+            span {{ad.requestorBloodBank.organization.name}}
+            br
+            span {{ad.requestorBloodBank.address.businessBlockName}},
+            br
+            span {{ad.requestorBloodBank.address.streetAddress}},
+            br
+            span {{ad.requestorBloodBank.address.city.name}} {{ad.requestorBloodBank.address.pinCode}},
+            br
+            span {{ad.requestorBloodBank.address.state.name}}
+            br
+            &nbsp;
+            br
+            span Contact:
+            br
+            span {{ad.requestorBloodBank.login.mobile?ad.requestorBloodBank.login.mobile:ad.requestorBloodBank.organization.login.mobile}}
+            br
+            span {{ad.requestorBloodBank.login.email?ad.requestorBloodBank.login.email:ad.requestorBloodBank.organization.login.email}}

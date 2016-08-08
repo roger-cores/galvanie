@@ -1,0 +1,14 @@
+md-content(ng-controller='BBCtrl', ng-cloak)
+  md-tabs(md-dynamic-height='', md-border-bottom='')
+      md-tab(label='storage')
+        ng-include(src="'/bb-storage'")
+
+
+
+
+
+
+      md-tab(label='incoming requests')
+        ng-include(src="'/bb-req'")
+      md-tab(label='ads')
+        ng-include(src="'/bb-ads'")

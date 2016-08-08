@@ -1,0 +1,111 @@
+md-content.md-padding(layout='column')
+  div(layout='column', layout-gt-xs='row',style='max-width: 900px;min-width: 300px;margin: auto;')
+    div(layout='column', flex-xs, flex-gt-xs='25')
+      md-card.md-raised(layout='row', layout-gt-xs='column')
+
+        div.main-button.main-button-indicator(layout='column', flex, layout-align='start center')
+          md-button.md-raised.md-warn.md-fab(ng-href='/register-emergency', aria-label='Request Emergency Blood')
+            md-icon(md-svg-src='images/blood.svg')
+          span Emergency?
+
+
+
+
+        md-divider
+
+        div.main-button.main-button-indicator(layout='column', flex, layout-align='start center')
+          md-button.md-raised.md-primary.md-fab(ng-href='/register-org', aria-label='Register your bloodbank')
+            md-icon(md-svg-src='images/buildings.svg')
+          span Register your bloodbank!
+
+
+        md-divider
+
+        div.main-button.main-button-indicator(layout='column', flex, layout-align='start center')
+          md-button.md-raised.md-primary.md-fab(ng-href='/register-user', aria-label='Donate now')
+            md-icon(md-svg-src='images/hand.svg')
+          span Donate now!
+          br
+
+
+
+
+
+    div(layout='column',flex-xs, flex-gt-xs='70')
+      md-card.md-raised(layout='column')
+        md-card-title
+          md-card-title-text
+            span.md-headline What is Galvanie?
+            md-divider
+            span.md-subhead Galvanie will keep your city's bloodbanks away from shortage by bringing donors whenever needed. It's aim is to make blood shortage a myth!
+            br
+            span &nbsp;
+            div(layout='column', layout-gt-xs='row')
+
+              div.main-button.main-button-indicator(layout='column', flex, layout-align='start center')
+                md-button.md-fab(ng-disabled='true', aria-label='Gifts!')
+                  md-icon(md-svg-src='images/ribbon.svg')
+                br
+                span &nbsp;&nbsp;We offer exciting gifts to our donors!&nbsp;&nbsp;
+
+
+
+
+
+              div.main-button.main-button-indicator(layout='column', flex, layout-align='start center')
+                md-button.md-fab(ng-disabled='true', aria-label='Blood levels!')
+                  md-icon(md-svg-src='images/level.svg')
+                br
+                span &nbsp;&nbsp;We also keep a watchful eye for the blood storage level&nbsp;&nbsp;
+
+
+
+              div.main-button.main-button-indicator(layout='column', flex, layout-align='start center')
+                md-button.md-fab(ng-disabled='true', aria-label='On demand!')
+                  md-icon(md-svg-src='images/syringe.svg')
+                br
+                span &nbsp;&nbsp;Hence, we are able to provide blood on demand to the needy!&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+  div(layout='column', layout-gt-xs='row',style='max-width: 900px;min-width: 300px;margin: auto;')
+    div(layout='column', flex-xs, flex-gt-xs='25')
+      md-card.md-raised(layout='column')
+        md-card-title
+          md-card-title-text
+            span.md-headline Contact Us
+
+        md-divider
+        md-list.contact-list
+          md-list-item.md-2-line
+
+            .md-list-item-text.contact(layout='column')
+              h4 Email
+              p galvanie@frostox.com
+          md-divider
+          md-list-item.md-2-line
+
+            .md-list-item-text.contact(layout='column')
+              h4 Phone
+              p +91 8655 814 592
+          md-divider
+          md-list-item.md-3-line
+            .md-list-item-text.contact(layout='column')
+              h4 Developed by
+              h4 Frostox & Co.
+              p www.frostox.com
+
+
+
+
+
+
+    div(layout='column',flex-xs, flex-gt-xs='70')
+      md-card.md-raised(layout='column', style='')
+        img(src='images/donate.jpg', style='opacity: 0.0;')

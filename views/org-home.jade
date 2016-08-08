@@ -1,0 +1,97 @@
+md-content(ng-controller='OrgHomeCtrl', layout-xs='column', layout-gt-xs='row')
+  div.md-inline-form(flex='')
+    md-card#card(layout-padding)
+      md-subheader Create or edit blood bank
+      div(layout='column')
+        form(name='bloodBank')
+          md-input-container(flex, style='width:100%;')
+            label name
+            input(name='name', required, ng-pattern="/^([a-zA-Z0-9^ ]){5,25}$/", minLength='5', maxLength='20', ng-model='bloodbankData.masterData.name')
+            div(ng-messages='bloodBank.name.$error', md-auto-hide="false")
+              div(ng-message-exp="['required', 'minlength', 'maxlength', 'pattern']") Please input a valid name between 5 to 20 alphanumeric characters
+          md-input-container(flex, style='width:100%;')
+            label license
+            input(name='license', required, ng-model='bloodbankData.masterData.license')
+            div(ng-messages='bloodBank.license.$error', md-auto-hide='false')
+              div(ng-message = 'required') Please input license number
+        md-checkbox(ng-model='bloodbankData.masterData.copyAddress', aria-label='Copy your existing address?') Copy current address
+        form(name='address', layout='column', ng-show='!bloodbankData.masterData.copyAddress', style='width: 100%;')
+          input(ng-show='false', disabled, style='opacity: 0; height:0px', ng-model='bloodbankData.masterData.address.state', name='state', required)
+          input(ng-show='false', disabled, style='opacity: 0; height:0px', ng-model='bloodbankData.masterData.address.city', name='city', required)
+          md-content(layout-gt-xs='row', layout-xs='column')
+            md-input-container(flex)
+              label State
+              md-select(ng-model='bloodbankData.masterData.address.state', ng-change='bloodbankData.masterData.address.city = null', multiple = false)
+                md-option(ng-repeat='state in states', value='{{state._id}}', ng-click='refreshCities(state._id)') {{state.name}}
+              div.errors(ng-messages='address.state.$error', md-auto-hide="false")
+                div(ng-message='required') Please chose a valid state
+
+            md-input-container(flex)
+              label City
+              md-select(ng-model='bloodbankData.masterData.address.city')
+                md-option(ng-repeat='city in cities', value='{{city._id}}') {{city.name}}
+              div.errors(ng-messages='address.city.$error', md-auto-hide="false")
+                div(ng-message='required') Please chose a valid city
+
+          md-input-container.md-block
+            label Street address
+            textarea(ng-model='bloodbankData.masterData.address.streetAddress', name='streetAddress', rows='5', ng-maxlength='150', ng-minlength='25' required)
+            div(ng-messages='address.streetAddress.$error', md-auto-hide='false')
+              div(ng-message-exp="['required', 'minlength', 'maxlength']") Street address should be between 25 to 150 characters
+          md-input-container
+            label Pin code
+            input(type='number', name='pin', ng-pattern='/[0-9]{6}/', ng-model='bloodbankData.masterData.address.pinCode', required)
+            div(ng-messages = 'address.pin.$error', md-auto-hide='false')
+              div(ng-message-exp="['required', 'pattern']") Please input a valid pincode
+          md-input-container
+            label Block name
+            input(ng-model='bloodbankData.masterData.address.businessBlockName', name='blockName', required)
+            div(ng-messages='address.blockName.$error', md-auto-hide='false')
+              div(ng-message='required') Block name is required
+
+
+
+
+
+
+
+
+        md-checkbox(ng-model='bloodbankData.masterData.loginActive', aria-label='Activate/Deactivate Login') {{bloodbankData.masterData.loginActive ? "Deactivate Login": "Activate Login"}}
+        md-button.md-primary(ng-show='(bloodbankData.masterData.loginActive && bloodbankData.masterData.login!=null)') Forgot Password
+        form(name='account', layout='column', ng-show='bloodbankData.masterData.loginActive && bloodbankData.masterData.login==null', style="width: 100%;")
+          md-input-container
+            label email
+            input(name='email', required, minLength='5', maxLength='100', ng-pattern="emailPattern", ng-model='login.email', ng-change='validateEmail(login.email)',  ng-model-options="{allowInvalid: true}")
+            div(ng-messages='account.email.$error', md-auto-hide="false")
+              div(ng-message-exp="['required', 'pattern', 'minLength', 'maxLength']") {{emailmsg}}
+
+          md-input-container
+            label password
+            input(name='password', type='password', required, minLength='8', maxLength='50', ng-pattern = "/(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?=.*[0-9])/", ng-model="login.password", ng-change='account.repassword.$validate()')
+            div(ng-messages='account.password.$error', md-auto-hide="false")
+              div(ng-message-exp="['required', 'minlength', 'maxlength', 'pattern']") Password should be at least 8 characters long with atleast one number, one special character, one lowercase and one uppercase letter
+          md-input-container
+            label repeat password
+            input(name='repassword', type='password', required, ng-pattern="repPasswordPattern", ng-model='login.repassword')
+            div(ng-messages='account.repassword.$error', md-auto-hide="false")
+              div(ng-message-exp="['required', 'pattern']") Passwords donot match
+        div(layout='row', layout-align='center center')
+          md-input-container
+            md-button.md-raised.md-primary(ng-click='bloodbankData.update()', ng-disabled='!bloodbankData.edittingMode || bloodBank.$invalid || (account.$invalid && bloodbankData.masterData.loginActive && bloodbankData.masterData.login == null)') Update
+          md-input-container
+            md-button.md-raised.md-primary(ng-click='bloodbankData.add()', ng-disabled='bloodbankData.edittingMode || bloodBank.$invalid || (account.$invalid && bloodbankData.masterData.loginActive && bloodbankData.masterData.login == null)') Add
+          md-input-container
+            md-button.md-raised(ng-click='bloodbankData.clear()') Clear
+
+  md-card(layout-padding, flex='')
+    md-list(flex)
+      md-subheader Blood Banks
+      md-list-item.md-2-line(ng-repeat='masterData in bloodbankData.masterDataList')
+        md-divider
+        div.md-list-item-text(flex = '3')
+          md-button(style='text-align: left;max-width:70%;min-width:50%;text-transform:none;', ng-click='bloodbankData.open(masterData)') {{masterData.name}}
+        div.md-secondary(layout='row', flex = '1')
+          md-button.md-icon-button(ng-click='bloodbankData.edit(masterData)')
+            md-icon(md-svg-icon='../images/pencil.svg', aria-label='Edit')
+          md-button.md-icon-button(ng-click='bloodbankData.remove(masterData)')
+            md-icon(md-svg-icon='../images/bin.svg', aria-label='Edit')
